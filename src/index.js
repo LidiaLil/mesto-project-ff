@@ -11,6 +11,10 @@ import {
   handleOverlayClick,
 } from "./scripts/components/modal.js";
 import { createCard } from "./scripts/components/card.js";
+import { 
+  deleteCard,
+  likeCard
+ } from './scripts/components/card.js';
 
 //Получение DOM-элементов
 const placesContainer = document.querySelector('.places__list'); //Контейнер для карточек
@@ -38,29 +42,19 @@ const profileJob = document.querySelector(".profile__description");
 const imageView = imagePopup.querySelector(".popup__image"); // Увеличенное изображение
 const captionView = imagePopup.querySelector(".popup__caption"); // Подпись к изображению
 
-//Объединяю в объект cardCallbacks для передачи в createCard
-const cardCallbacks = {
-  onDeleteCard: deleteCard,
-  onLikeCard: likeCard,
-  onOpenView: openView,
-};
-
-//Функция удаления карточки
-function deleteCard(cardElement) {
-    cardElement.remove();
-};
-
-// Переключает состояние лайка
-function likeCard(likeButton) {
-  likeButton.classList.toggle('card__like-button_is-active'); 
-};
-
 // Открывает попап с увеличенным изображением
 function openView({ name, link }) {
   imageView.src = link;
   imageView.alt = name;
   captionView.textContent = name;
   openModal(imagePopup);
+};
+
+//Объединяю в объект cardCallbacks для передачи в createCard
+const cardCallbacks = {
+  onDeleteCard: deleteCard,
+  onLikeCard: likeCard,
+  onOpenView: openView,
 };
 
 // функция добавления карточки

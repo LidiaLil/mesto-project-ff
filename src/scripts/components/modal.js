@@ -3,18 +3,19 @@ const popupOpendClass = "popup_is-opened";
 
 // Универсальная функция открытия модального окна (попапа)
 export function openModal(popupElement) {
-  // Добавляем класс для анимации
-  popupElement.classList.add("popup_is-animated")
   // Добавляем обработчик закрытия по Esc
   document.addEventListener("keydown", handleEscape);
-  // Добавляем класс, который делает попап видимым
-  popupElement.classList.add(popupOpendClass);
+  // Добавляем класс для анимации
+  popupElement.classList.add("popup_is-animated");
+  // Отложенное добавление класса видимости
+  setTimeout(()=>{
+  popupElement.classList.add(popupOpendClass)
+  },10);
 }
 
 // функция закрытия модального окна (попапа)
 export function closeModal(popupElement) {
   popupElement.classList.remove(popupOpendClass);
-
   // Удаляем обработчики закрытия
   document.removeEventListener("keydown", handleEscape);
 }
