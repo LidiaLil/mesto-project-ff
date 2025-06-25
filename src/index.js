@@ -61,7 +61,6 @@ const cardCallbacks = {
 function handleAddCardFormSubmit(evt) {
   evt.preventDefault();
   // Получаем данные из формы
-
   const name = placeInput.value;
   const link = linkInput.value;
 
@@ -102,6 +101,11 @@ popups.forEach((popup) => {
     closeModal(popup);
   });
   popup.addEventListener("click", handleOverlayClick); // Закрытие по клику на оверлей
+
+//плавное открытие с помощью класса анимации
+//Класс анимации нужно повесить в DOM только один раз при загрузке страницы,
+//либо добавить прямо в html для каждого popup(но в этом случае будет баг с мерцанием)
+  popup.classList.add('popup_is-animated');
 });
 
 // Назначаем обработчики открытия изменения профиля
