@@ -7,7 +7,7 @@ export function openModal(popupElement) {
   document.addEventListener("keydown", handleEscape);
   // Добавляем класс для анимации
   popupElement.classList.add("popup_is-animated");
-  // Отложенное добавление класса видимости
+  // Добавление класса видимости с задержкой мс
   setTimeout(()=>{
   popupElement.classList.add(popupOpendClass)
   },10);
