@@ -1,3 +1,5 @@
+import { toggleLike } from "../api";
+
 const cardTemplate = document
   .getElementById("card-template")
   .content.querySelector(".card");
@@ -52,4 +54,16 @@ export function createCard(
   });
 
   return cardElement;
-}
+};
+
+// Функция переключения лайка
+export function likeCard(likeButton, cardId, isLiked, likeCounter) {
+  // вызов API для обновления лайка на сервере
+  toggleLike(cardId, isLiked)
+    .then((updatedCard) => {
+      // обновление состояния лайков
+      likeCounter.textContent = updatedCard.likes.length;
+      likeButton.classList.toggle("card__like-button_is-active");
+    })
+    .catch((error) => console.log(`Не удалось поставить лайк: ${error}`));
+};

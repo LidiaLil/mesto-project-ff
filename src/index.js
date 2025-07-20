@@ -5,7 +5,10 @@ import {
   closeModal,
   handleOverlayClick,
 } from "./scripts/components/modal.js";
-import { createCard } from "./scripts/components/card.js";
+import { 
+  createCard,
+  likeCard 
+} from "./scripts/components/card.js"; 
 import { enableValidation, clearValidation } from "./scripts/validation.js";
 import {
   getUserInfo,
@@ -13,7 +16,6 @@ import {
   updateUserInfo,
   addNewCard,
   updateAvatar,
-  toggleLike,
   removeCard,
 } from "./scripts/api.js";
 
@@ -151,18 +153,6 @@ const handleConfirm = (evt) => {
 
 // Вешаем обработчик на форму подтверждения
 confirmPopup.addEventListener("submit", handleConfirm);
-
-// Функция переключения лайка
-function likeCard(likeButton, cardId, isLiked, likeCounter) {
-  // вызов API для обновления лайка на сервере
-  toggleLike(cardId, isLiked)
-    .then((updatedCard) => {
-      // обновление состояния лайков
-      likeCounter.textContent = updatedCard.likes.length;
-      likeButton.classList.toggle("card__like-button_is-active");
-    })
-    .catch((error) => console.log(`Не удалось поставить лайк: ${error}`));
-}
 
 //Объединяю в объект cardCallbacks для передачи в createCard
 const cardCallbacks = {
