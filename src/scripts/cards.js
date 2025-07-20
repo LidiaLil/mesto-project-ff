@@ -1,5 +1,9 @@
 export const initialCards = [
     {
+    name: "Дерево",
+    link: "https://images.unsplash.com/photo-1526397751294-331021109fbd"
+    },
+    {
      name: "Лес",
      link: "https://images.pexels.com/photos/2662116/pexels-photo-2662116.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
     },
