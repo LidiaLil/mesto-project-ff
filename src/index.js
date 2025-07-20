@@ -13,8 +13,8 @@ import {
   updateUserInfo,
   addNewCard,
   updateAvatar,
-  toggleLike, 
-  removeCard
+  toggleLike,
+  removeCard,
 } from "./scripts/api.js";
 
 //Получение DOM-элементов
@@ -48,8 +48,13 @@ const linkInput = newCardForm.querySelector(".popup__input_type_url");
 //Элементы профиля
 const profileName = document.querySelector(".profile__title");
 const profileJob = document.querySelector(".profile__description");
+// Элементы попапа подтверждения
+const confirmPopup = document.querySelector(".popup_type_confirm");
+const confirmButton = confirmPopup.querySelector(".popup__button");
 
 let userId; //идентификатор текущего пользователя (для определения своих карточек)
+let currentCardId = null;    //Id карточки для удаления
+let currentCardElement = null; //DOM-элемент карточки
 
 // включение валидации вызовом enableValidation
 // все настройки передаются при вызове
@@ -84,9 +89,9 @@ function renderCards(cards, userId) {
 }
 
 //передается массив промисов, которые должны быть выполнены, т.е. наши запросы
-Promise.all([getUserInfo(), getCardList()]) 
+Promise.all([getUserInfo(), getCardList()])
   .then(([userData, cards]) => {
-    //в блок .then мы попадем когда оба запроса будут выполнены. 
+    //в блок .then мы попадем когда оба запроса будут выполнены.
     // userData-результат getUserInfo(), cards - результат getCardList()
     userId = userData._id; //// Сохраняем ID пользователя
     //Обновление профиля в интерфейсе
@@ -111,40 +116,41 @@ function openView({ name, link }) {
   captionView.textContent = name;
   openModal(imagePopup);
 };
-//Функция удаления карточки
+// Функция удаления карточки (теперь только открывает попап подтверждения)
 function deleteCard(cardElement, cardId) {
-  const confirmPopup = document.querySelector(".popup_type_confirm");
-  const confirmButton = confirmPopup.querySelector(".popup__button");
-
-  // Обработчик подтверждения удаления
-  const handleConfirm = (evt) => {
-    evt.preventDefault();
-    // Блокируем кнопку
-    confirmButton.textContent = "Удаление...";
-    confirmButton.disabled = true;
-
-    // Отправляем запрос на сервер
-    removeCard(cardId)
-      .then(() => {
-        // Удаляем карточку из DOM после успешного ответа
-        cardElement.remove();
-        closeModal(confirmPopup);
-      })
-      .catch((error) => {
-        console.log(`Ошибка при удалении карточки: ${error}`);
-      })
-      .finally(() => {
-        confirmButton.textContent = "Да";
-        confirmButton.disabled = false;
-      });
-  };
-
-  // Вешаем обработчик на форму подтверждения
-  //флаг {once: true} для автоматического удаления обработчиков после срабатывания.
-  confirmPopup.addEventListener("submit", handleConfirm, { once: true });
-
-  openModal(confirmPopup); // Показываем попап подтверждения
+  currentCardId = cardId; // Сохраняем ID карточки
+  currentCardElement = cardElement; // Сохраняем сам элемент
+  openModal(confirmPopup); // Открываем попап подтверждения
 };
+
+// Когда пользователь подтверждает удаление, 
+// обработчик handleConfirm использует эти переменные 
+// для выполнения удаления.
+const handleConfirm = (evt) => {
+  evt.preventDefault();
+
+  // Блокируем кнопку
+  confirmButton.textContent = "Удаление...";
+  confirmButton.disabled = true;
+
+  // Отправляем запрос на сервер
+  removeCard(currentCardId)
+    .then(() => {
+      // Удаляем карточку из DOM после успешного ответа
+      currentCardElement.remove();
+      closeModal(confirmPopup);
+    })
+    .catch((error) => {
+      console.log(`Ошибка при удалении карточки: ${error}`);
+    })
+    .finally(() => {
+      confirmButton.textContent = "Да";
+      confirmButton.disabled = false;
+    });
+};
+
+// Вешаем обработчик на форму подтверждения
+confirmPopup.addEventListener("submit", handleConfirm);
 
 // Функция переключения лайка
 function likeCard(likeButton, cardId, isLiked, likeCounter) {
@@ -156,7 +162,7 @@ function likeCard(likeButton, cardId, isLiked, likeCounter) {
       likeButton.classList.toggle("card__like-button_is-active");
     })
     .catch((error) => console.log(`Не удалось поставить лайк: ${error}`));
-};
+}
 
 //Объединяю в объект cardCallbacks для передачи в createCard
 const cardCallbacks = {
