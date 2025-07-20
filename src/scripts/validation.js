@@ -41,6 +41,8 @@ const hasInvalidInput = (inputList) => {
   });
 };
 
+
+
 //функция toggleButtonState отключает и включает кнопку.
 // принимает массив полей ввода и элемент кнопки, состояние которой нужно менять
 const toggleButtonState = (
@@ -151,15 +153,12 @@ export const clearValidation = (
   // Обойдём все элементы полученной коллекции
   inputList.forEach((inputElement) => {
     // удаляю класс с ошибкой
-    // вместо hideInputError = (formElement, inputElement, validationConfig); вызвала isValid
     // Если поле не проходит валидацию, покажем ошибку, если проходит-скроет
-    isValid(formElement, inputElement, validationConfig);
+    hideInputError(formElement, inputElement, validationConfig);
+    // если передать пустую строку, то будут доступны, стандартные браузерные сообщения
+    inputElement.setCustomValidity(""); 
   });
   
-  // isValid уже есть setCustomValidity
-  // если передать пустую строку, то будут доступны, стандартные браузерные сообщения
-  //inputElement.setCustomValidity("");
-
   // Найдём в этой форме профиля кнопку отправки
   const buttonElement = formElement.querySelector(
     validationConfig.submitButtonSelector

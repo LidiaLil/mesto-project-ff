@@ -6,7 +6,6 @@ import {
   handleOverlayClick,
 } from "./scripts/components/modal.js";
 import { createCard } from "./scripts/components/card.js";
-import { deleteCard, likeCard } from "./scripts/components/card.js";
 import { enableValidation, clearValidation } from "./scripts/validation.js";
 import {
   getUserInfo,
@@ -14,6 +13,8 @@ import {
   updateUserInfo,
   addNewCard,
   updateAvatar,
+  toggleLike, 
+  removeCard
 } from "./scripts/api.js";
 
 //Получение DOM-элементов
@@ -109,7 +110,53 @@ function openView({ name, link }) {
   imageView.alt = name;
   captionView.textContent = name;
   openModal(imagePopup);
-}
+};
+//Функция удаления карточки
+function deleteCard(cardElement, cardId) {
+  const confirmPopup = document.querySelector(".popup_type_confirm");
+  const confirmButton = confirmPopup.querySelector(".popup__button");
+
+  // Обработчик подтверждения удаления
+  const handleConfirm = (evt) => {
+    evt.preventDefault();
+    // Блокируем кнопку
+    confirmButton.textContent = "Удаление...";
+    confirmButton.disabled = true;
+
+    // Отправляем запрос на сервер
+    removeCard(cardId)
+      .then(() => {
+        // Удаляем карточку из DOM после успешного ответа
+        cardElement.remove();
+        closeModal(confirmPopup);
+      })
+      .catch((error) => {
+        console.log(`Ошибка при удалении карточки: ${error}`);
+      })
+      .finally(() => {
+        confirmButton.textContent = "Да";
+        confirmButton.disabled = false;
+      });
+  };
+
+  // Вешаем обработчик на форму подтверждения
+  //флаг {once: true} для автоматического удаления обработчиков после срабатывания.
+  confirmPopup.addEventListener("submit", handleConfirm, { once: true });
+
+  openModal(confirmPopup); // Показываем попап подтверждения
+};
+
+// Функция переключения лайка
+function likeCard(likeButton, cardId, isLiked, likeCounter) {
+  // вызов API для обновления лайка на сервере
+  toggleLike(cardId, isLiked)
+    .then((updatedCard) => {
+      // обновление состояния лайков
+      likeCounter.textContent = updatedCard.likes.length;
+      likeButton.classList.toggle("card__like-button_is-active");
+    })
+    .catch((error) => console.log(`Не удалось поставить лайк: ${error}`));
+};
 
 //Объединяю в объект cardCallbacks для передачи в createCard
 const cardCallbacks = {

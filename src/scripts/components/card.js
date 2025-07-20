@@ -1,63 +1,16 @@
-// описаны функции для работы с карточками: функция создания карточки, функции-обработчики событий удаления и лайка карточки;
-// добавление карточек на страницу выполнено перебором массива с данными карточек с помощью цикла. используется метод .forEach или цикл for…of.
-import { toggleLike, removeCard } from "../api";
-import { openModal, closeModal } from "./modal";
-
 const cardTemplate = document
   .getElementById("card-template")
   .content.querySelector(".card");
 
-//Функция удаления карточки
-export function deleteCard(cardElement, cardId) {
-  const confirmPopup = document.querySelector(".popup_type_confirm");
-  const confirmButton = confirmPopup.querySelector(".popup__button");
-
-  // Обработчик подтверждения удаления
-  const handleConfirm = (evt) => {
-    evt.preventDefault();
-    // Блокируем кнопку
-    confirmButton.textContent = "Удаление...";
-    confirmButton.disabled = true;
-
-    // Отправляем запрос на сервер
-    removeCard(cardId)
-      .then(() => {
-        // Удаляем карточку из DOM после успешного ответа
-        cardElement.remove();
-        closeModal(confirmPopup);
-      })
-      .catch((error) => {
-        console.log(`Ошибка при удалении карточки: ${error}`);
-      })
-      .finally(() => {
-        confirmButton.textContent = "Да";
-        confirmButton.disabled = false;
-      });
-  };
-
-  // Вешаем обработчик на форму подтверждения
-  //флаг {once: true} для автоматического удаления обработчиков после срабатывания.
-  confirmPopup.addEventListener("submit", handleConfirm, { once: true });
-
-  openModal(confirmPopup); // Показываем попап подтверждения
-}
-
-// Функция переключения лайка
-export function likeCard(likeButton, cardId, isLiked, likeCounter) {
-  // вызов API для обновления лайка на сервере
-  toggleLike(cardId, isLiked)
-    .then((updatedCard) => {
-      // обновление состояния лайков
-      likeCounter.textContent = updatedCard.likes.length;
-      likeButton.classList.toggle("card__like-button_is-active");
-    })
-    .catch((error) => console.log(`Не удалось поставить лайк: ${error}`));
-}
 
 //Основная функция создания карточки
 export function createCard(
   dataObject,
-  { onDeleteCard, onLikeCard, onOpenView },
+  { 
+    onDeleteCard, 
+    onLikeCard, 
+    onOpenView 
+  },
   userId
 ) {
   const cardElement = cardTemplate.cloneNode(true); // Клонируем шаблон

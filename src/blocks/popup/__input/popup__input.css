@@ -33,4 +33,6 @@
 
 .popup__error_visible {
   visibility: visible; 
+  color: #FF0000;
+  font-size: 12px;
 }
